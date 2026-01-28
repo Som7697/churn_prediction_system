@@ -1,0 +1,13 @@
+
+customer_id,name,email,phone,purchase_frequency,total_amount_spent,last_purchase_date,average_order_value,churn_prediction
+CUST001,Rajesh Kumar,rajesh@email.com,9876543210,15,25000,2025-01-15,1666.67,0
+CUST002,Priya Sharma,priya@email.com,9876543211,3,1500,2024-08-20,500,1
+CUST003,Amit Patel,amit@email.com,9876543212,25,75000,2025-01-20,3000,0
+CUST004,Sneha Reddy,sneha@email.com,9876543213,8,12000,2024-11-10,1500,1
+CUST005,Vikram Singh,vikram@email.com,9876543214,20,45000,2025-01-18,2250,0
+CUST006,Anjali Verma,anjali@email.com,9876543215,2,800,2024-07-15,400,1
+CUST007,Rahul Gupta,rahul@email.com,9876543216,18,38000,2025-01-22,2111.11,0
+CUST008,Pooja Nair,pooja@email.com,9876543217,5,3500,2024-09-25,700,1
+CUST009,Arjun Mehta,arjun@email.com,9876543218,30,95000,2025-01-21,3166.67,0
+CUST010,Divya Iyer,divya@email.com,9876543219,12,22000,2025-01-10,1833.33,0
+```

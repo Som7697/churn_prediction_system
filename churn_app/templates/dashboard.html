@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-tachometer-alt"></i> Analytics Dashboard</h1>
+        <div class="header-actions">
+            <a href="{% url 'predict_churn' %}" class="btn btn-primary">
+                <i class="fas fa-sync"></i> Update Predictions
+            </a>
+            <a href="{% url 'train_model' %}" class="btn btn-secondary">
+                <i class="fas fa-robot"></i> Retrain Model
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="dashboard-stats">
+        <div class="dash-card blue">
+            <i class="fas fa-users card-icon"></i>
+            <div class="card-content">
+                <h3>{{ total_customers }}</h3>
+                <p>Total Customers</p>
+            </div>
+        </div>
+        <div class="dash-card red">
+            <i class="fas fa-user-times card-icon"></i>
+            <div class="card-content">
+                <h3>{{ churned_customers }}</h3>
+                <p>Churned</p>
+            </div>
+        </div>
+        <div class="dash-card orange">
+            <i class="fas fa-exclamation-triangle card-icon"></i>
+            <div class="card-content">
+                <h3>{{ high_risk_customers }}</h3>
+                <p>High Risk</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="dashboard-grid">
+        <!-- Segment Analysis -->
+        <div class="dashboard-section">
+            <h2 class="section-title">Customer Segments</h2>
+            <div class="segment-list">
+                {% for segment in segments %}
+                <div class="segment-item">
+                    <div class="segment-header">
+                        <span class="badge badge-{{ segment.customer_segment|lower }}">
+                            {{ segment.customer_segment }}
+                        </span>
+                        <strong>{{ segment.count }} customers</strong>
+                    </div>
+                    <div class="segment-revenue">
+                        Revenue: ₹{{ segment.revenue|floatformat:0 }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Top Customers -->
+        <div class="dashboard-section">
+            <h2 class="section-title">Top 5 Customers</h2>
+            <div class="top-customers">
+                {% for customer in top_customers %}
+                <div class="customer-item">
+                    <div class="customer-avatar">{{ customer.name.0 }}</div>
+                    <div class="customer-details">
+                        <strong>{{ customer.name }}</strong>
+                        <small>{{ customer.customer_id }}</small>
+                    </div>
+                    <div class="customer-revenue">
+                        ₹{{ customer.total_amount_spent|floatformat:0 }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- At-Risk Customers -->
+    <div class="dashboard-section full-width">
+        <h2 class="section-title">
+            <i class="fas fa-exclamation-circle"></i> At-Risk Customers
+        </h2>
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Segment</th>
+                        <th>Total Spent</th>
+                        <th>Churn Risk</th>
+                        <th>Action Needed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in at_risk_customers %}
+                    <tr>
+                        <td>
+                            <strong>{{ customer.name }}</strong><br>
+                            <small>{{ customer.customer_id }}</small>
+                        </td>
+                        <td>
+                            <span class="badge badge-{{ customer.customer_segment|lower }}">
+                                {{ customer.customer_segment }}
+                            </span>
+                        </td>
+                        <td>₹{{ customer.total_amount_spent|floatformat:0 }}</td>
+                        <td>
+                            <div class="risk-meter">
+                                <div class="risk-bar" style="width: {{ customer.churn_probability }}%"></div>
+                            </div>
+                            <span>{{ customer.churn_probability|floatformat:1 }}%</span>
+                        </td>
+                        <td>
+                            {% if customer.churn_probability >= 80 %}
+                                <span class="badge badge-danger">Urgent Contact</span>
+                            {% elif customer.churn_probability >= 60 %}
+                                <span class="badge badge-warning">Send Offer</span>
+                            {% else %}
+                                <span class="badge badge-info">Monitor</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No at-risk customers found!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

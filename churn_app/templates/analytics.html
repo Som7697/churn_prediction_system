@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-chart-bar"></i> Advanced Analytics</h1>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="analytics-summary">
+        <div class="summary-card">
+            <h3>Total Customers</h3>
+            <div class="summary-number">{{ total_customers }}</div>
+            <p>across all segments</p>
+        </div>
+        <div class="summary-card">
+            <h3>Churn Rate</h3>
+            <div class="summary-number">
+                {% widthratio churn_data.churned total_customers 100 %}%
+            </div>
+            <p>customers at risk</p>
+        </div>
+        <div class="summary-card">
+            <h3>Active Rate</h3>
+            <div class="summary-number">
+                {% widthratio churn_data.active total_customers 100 %}%
+            </div>
+            <p>healthy customers</p>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+        <!-- Segment Distribution Chart -->
+        <div class="chart-container">
+            <h2 class="chart-title">Customer Segment Distribution</h2>
+            <div class="chart-wrapper">
+                <canvas id="segmentChart"></canvas>
+            </div>
+            <div class="chart-legend">
+                {% for segment in segment_data %}
+                <div class="legend-item">
+                    <span class="legend-color" style="background: {% if segment.customer_segment == 'High' %}#10b981{% elif segment.customer_segment == 'Medium' %}#f59e0b{% else %}#ef4444{% endif %}"></span>
+                    <span>{{ segment.customer_segment }}: {{ segment.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Churn Status Chart -->
+        <div class="chart-container">
+            <h2 class="chart-title">Churn Status Overview</h2>
+            <div class="chart-wrapper">
+                <canvas id="churnChart"></canvas>
+            </div>
+            <div class="chart-stats">
+                <div class="stat-item">
+                    <span class="stat-dot active"></span>
+                    <span>Active: {{ churn_data.active }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-dot churned"></span>
+                    <span>Churned: {{ churn_data.churned }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insights Section -->
+    <div class="insights-section">
+        <h2 class="section-title"><i class="fas fa-lightbulb"></i> Key Insights</h2>
+        <div class="insights-grid">
+            <div class="insight-card">
+                <i class="fas fa-trophy insight-icon"></i>
+                <h3>Best Performing Segment</h3>
+                <p>
+                    {% with segment_data|first as best %}
+                    <strong>{{ best.customer_segment }}</strong> segment has the most customers 
+                    with {{ best.count }} active users.
+                    {% endwith %}
+                </p>
+            </div>
+            <div class="insight-card">
+                <i class="fas fa-chart-line insight-icon"></i>
+                <h3>Retention Rate</h3>
+                <p>
+                    Your customer retention stands at 
+                    <strong>{% widthratio churn_data.active total_customers 100 %}%</strong>,
+                    showing {% if churn_data.active > churn_data.churned %}strong{% else %}improvement needed in{% endif %} customer loyalty.
+                </p>
+            </div>
+            <div class="insight-card">
+                <i class="fas fa-bullseye insight-icon"></i>
+                <h3>Action Required</h3>
+                <p>
+                    Focus on <strong>{{ churn_data.churned }}</strong> churned customers.
+                    Implement retention strategies to reduce churn rate.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recommendations-section">
+        <h2 class="section-title"><i class="fas fa-star"></i> Recommendations</h2>
+        <div class="recommendation-list">
+            <div class="recommendation-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Personalized Offers</strong>
+                    <p>Send targeted promotions to high-risk customers based on their purchase history</p>
+                </div>
+            </div>
+            <div class="recommendation-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Loyalty Programs</strong>
+                    <p>Introduce reward points for frequent purchasers to increase retention</p>
+                </div>
+            </div>
+            <div class="recommendation-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Re-engagement Campaign</strong>
+                    <p>Contact customers who haven't purchased in 60+ days with special discounts</p>
+                </div>
+            </div>
+            <div class="recommendation-item">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong>Customer Feedback</strong>
+                    <p>Survey churned customers to understand reasons and improve services</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Segment Distribution Chart
+    const segmentCtx = document.getElementById('segmentChart').getContext('2d');
+    new Chart(segmentCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ segment_data|safe|json_script:"segment-labels" }}.map(s => s.customer_segment),
+            datasets: [{
+                data: {{ segment_data|safe|json_script:"segment-counts" }}.map(s => s.count),
+                backgroundColor: ['#ef4444', '#f59e0b', '#10b981'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Churn Status Chart
+    const churnCtx = document.getElementById('churnChart').getContext('2d');
+    new Chart(churnCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Active', 'Churned'],
+            datasets: [{
+                data: [{{ churn_data.active }}, {{ churn_data.churned }}],
+                backgroundColor: ['#10b981', '#ef4444'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+</script>
+
+<script>
+    // Helper to parse JSON from script tags
+    document.querySelectorAll('[id^="segment-"]').forEach(el => {
+        const data = JSON.parse(el.textContent);
+        window[el.id.replace('-', '_')] = data;
+    });
+</script>
+
+{% endblock %}

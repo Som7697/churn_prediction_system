@@ -1,0 +1,67 @@
+# Python
+*.py[cod]
+*$py.class
+*.so
+__pycache__/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+*.pot
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ML Models (IMPORTANT - Don't upload large model files)
+churn_app/ml_models/saved_models/*.pkl
+churn_app/ml_models/saved_models/*.joblib
+churn_app/ml_models/saved_models/scaler.pkl
+
+# Environment variables
+.env
+*.env
+.env.local
+
+# Database
+*.sql
+*.sqlite
+*.db
+
+# Migrations (Optional - Remove these lines if you want to upload migrations)
+# **/migrations/*.py
+# !**/migrations/__init__.py
+
+# Sensitive data
+secrets.json
+config.json
+
+# Cache
+.cache/
+*.cache
+
+# Jupyter Notebooks (if you add any)
+.ipynb_checkpoints/

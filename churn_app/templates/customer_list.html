@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer List{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-users"></i> Customer Management</h1>
+        <a href="{% url 'add_customer' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Customer
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-section">
+        <form method="get" class="filter-form">
+            <select name="segment" class="filter-select">
+                <option value="">All Segments</option>
+                <option value="Low">Low Value</option>
+                <option value="Medium">Medium Value</option>
+                <option value="High">High Value</option>
+            </select>
+            
+            <select name="churn" class="filter-select">
+                <option value="">All Status</option>
+                <option value="yes">Churned</option>
+                <option value="no">Active</option>
+            </select>
+            
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+        </form>
+    </div>
+
+    <!-- Customer Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Purchases</th>
+                    <th>Total Spent</th>
+                    <th>Segment</th>
+                    <th>Churn Risk</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td><strong>{{ customer.customer_id }}</strong></td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.purchase_frequency }}</td>
+                    <td>₹{{ customer.total_amount_spent }}</td>
+                    <td>
+                        <span class="badge badge-{{ customer.customer_segment|lower }}">
+                            {{ customer.customer_segment }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if customer.churn_prediction %}
+                            <span class="status-badge danger">
+                                <i class="fas fa-exclamation-circle"></i> 
+                                {{ customer.churn_probability|floatformat:2 }}%
+                            </span>
+                        {% else %}
+                            <span class="status-badge success">
+                                <i class="fas fa-check-circle"></i> Active
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'delete_customer' customer.pk %}" 
+                           class="btn-icon btn-danger" 
+                           onclick="return confirm('Delete this customer?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No customers found. Add your first customer!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

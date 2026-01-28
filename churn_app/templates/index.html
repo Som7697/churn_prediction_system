@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Churn Prediction System{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Smart Sales & Customer Churn Prediction</h1>
+        <p class="hero-subtitle">Predict customer behavior using Machine Learning</p>
+        <div class="hero-buttons">
+            <a href="{% url 'add_customer' %}" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Add Customer
+            </a>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-chart-line"></i> View Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="container">
+    <h2 class="section-title">System Overview</h2>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ total_customers }}</h3>
+                <p>Total Customers</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ active_customers }}</h3>
+                <p>Active Customers</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ churned_customers }}</h3>
+                <p>Churned Customers</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-info">
+                <h3>₹{{ total_revenue|floatformat:0 }}</h3>
+                <p>Total Revenue</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <h2 class="section-title">Key Features</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-brain feature-icon"></i>
+                <h3>ML Predictions</h3>
+                <p>Advanced algorithms predict customer churn with high accuracy</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-pie feature-icon"></i>
+                <h3>Analytics Dashboard</h3>
+                <p>Visualize trends and customer behavior patterns</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bell feature-icon"></i>
+                <h3>Risk Alerts</h3>
+                <p>Identify high-risk customers before they leave</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-layer-group feature-icon"></i>
+                <h3>Segmentation</h3>
+                <p>Categorize customers into Low, Medium, High value segments</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="action-buttons">
+            <a href="{% url 'train_model' %}" class="action-btn">
+                <i class="fas fa-robot"></i>
+                <span>Train Model</span>
+            </a>
+            <a href="{% url 'predict_churn' %}" class="action-btn">
+                <i class="fas fa-calculator"></i>
+                <span>Run Predictions</span>
+            </a>
+            <a href="{% url 'customer_list' %}" class="action-btn">
+                <i class="fas fa-list"></i>
+                <span>View All Customers</span>
+            </a>
+            <a href="{% url 'analytics' %}" class="action-btn">
+                <i class="fas fa-chart-area"></i>
+                <span>View Analytics</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
